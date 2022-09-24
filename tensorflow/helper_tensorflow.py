@@ -33,7 +33,7 @@ def callbacks_early_stopping(monitor: str, patience: int, verbose=0):
   return callbacks_early_stopping
 
 # Tensorboard callback
-def callback_create_tensorboard(dir_name: str, experiment_name: str):
+def callbacks_create_tensorboard(dir_name: str, experiment_name: str):
   """
   Example: callbacks=[callback_create_tensorboard(dir_name="tensorflow_hub",
                                                   experiment_name="efficientnet")])
@@ -45,6 +45,24 @@ def callback_create_tensorboard(dir_name: str, experiment_name: str):
   print(f"Saving TensorBoard log files to: {log_dir}")
   return tensorboard_callback
 
+def callbacks_model_checkpoint(checkpoint_path: str, monitor: str="val_accuracy", save_best_only=True, save_weights_only=True, verbose=0):
+  """
+  Example:
+  - callbacks_model_checkpoint("model_checkpoints/cp.ckpt")
+  Args:
+      checkpoint_path (str): _description_
+      monitor (str, optional): _description_. Defaults to "val_accuracy".
+      save_best_only (bool, optional): _description_. Defaults to True.
+      save_weights_only (bool, optional): _description_. Defaults to True.
+      verbose (int, optional): _description_. Defaults to 0.
+  """
+  model_checkpoint = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
+                                                        monitor=monitor,
+                                                        save_best_only=save_best_only,
+                                                        save_weights_only=save_weights_only,
+                                                        verbose=verbose)
+
+  return model_checkpoint
 
 # ================================ #
 

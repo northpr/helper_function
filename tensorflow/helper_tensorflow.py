@@ -149,6 +149,7 @@ def evaluate_classification(y_true, y_pred):
   return model_results
 
 def evaluate_regression(y_true, y_pred, mape=False, mase=False):
+
   y_true = tf.cast(y_true, dtype=tf.float32)
   y_pred = tf.cast(y_pred, dtype=tf.float32)
   
@@ -157,9 +158,9 @@ def evaluate_regression(y_true, y_pred, mape=False, mase=False):
   mse = tf.keras.metrics.mean_squared_error(y_true, y_pred)
   rmse = tf.sqrt(mse)
   mape = (tf.keras.metrics.mean_absolute_percentage_error(y_true, y_pred) \
-    if mape == True else "No mape value")
+    if mape == True else ["No value"])
   mase = (mean_absolute_scaled_error(y_true, y_pred) \
-    if mase  == True else "No mase value")
+    if mase  == True else ["No value"])
   
   return {"mae": mae.numpy(),
           "mse": mse.numpy(),

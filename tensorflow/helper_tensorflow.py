@@ -112,11 +112,22 @@ def plot_loss_curves(history,figsize=(7,7)):
   
 # ================================ #
 
-## Evaluate ##
+## Evaluate function ##
 # Function to evaluate: accuracy, precision, recall, f1-score
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+from sklearn.metrics import accuracy_score, mean_absolute_percentage_error, precision_recall_fscore_support
 
-def calculate_results(y_true, y_pred):
+def mean_absolute_scaled_error(y_true, y_pred):
+  """
+  Implement MASE (assuming no seasonality of data).
+  """
+  mae = tf.reduce_mean(tf.abs(y_true - y_pred))
+
+  # Find MAE of naive forecast (no seasonality)
+  mae_naive_no_season = tf.reduce_mean(tf.abs(y_true[1:] - y_true[:-1])) # our seasonality is 1 day (hence the shifting of 1 day)
+
+  return mae / mae_naive_no_season
+
+def evaluate_classification(y_true, y_pred):
   """
   Calculates model accuracy, precision, recall and f1 score of a binary classification model.
 
@@ -137,6 +148,24 @@ def calculate_results(y_true, y_pred):
                   "f1": model_f1}
   return model_results
 
+def evaluate_regression(y_true, y_pred, mape=False, mase=False):
+  y_true = tf.cast(y_true, dtype=tf.float32)
+  y_pred = tf.cast(y_pred, dtype=tf.float32)
+  
+  # Calculate multiple metrics
+  mae = tf.keras.metrics.mean_absolute_error(y_true, y_pred)
+  mse = tf.keras.metrics.mean_squared_error(y_true, y_pred)
+  rmse = tf.sqrt(mse)
+  mape = (tf.keras.metrics.mean_absolute_percentage_error(y_true, y_pred) \
+    if mape == True else "No mape value")
+  mase = (mean_absolute_scaled_error(y_true, y_pred) \
+    if mase  == True else "No mase value")
+  
+  return {"mae": mae.numpy(),
+          "mse": mse.numpy(),
+          "rmse": rmse.numpy(),
+          "mape": mape.numpy(),
+          "mase": mase.numpy()}
 # ================================ #
 
 

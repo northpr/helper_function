@@ -158,9 +158,9 @@ def evaluate_regression(y_true, y_pred, mape=False, mase=False):
   mse = tf.keras.metrics.mean_squared_error(y_true, y_pred)
   rmse = tf.sqrt(mse)
   mape = (tf.keras.metrics.mean_absolute_percentage_error(y_true, y_pred) \
-    if mape == True else ["No value"])
+    if mape == True else tf.constant("No value"))
   mase = (mean_absolute_scaled_error(y_true, y_pred) \
-    if mase  == True else ["No value"])
+    if mase  == True else np.array(["No value"]))
   
   return {"mae": mae.numpy(),
           "mse": mse.numpy(),

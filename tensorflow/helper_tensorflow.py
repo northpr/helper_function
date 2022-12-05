@@ -48,7 +48,11 @@ def callbacks_create_tensorboard(dir_name: str, experiment_name: str):
 def callbacks_model_checkpoint(checkpoint_path: str, monitor: str="val_accuracy", save_best_only=True, save_weights_only=True, verbose=0):
   """
   Example:
-  - callbacks_model_checkpoint("model_checkpoints/cp.ckpt")
+      model_checkpoint = callbacks_model_checkpoint("model_checkpoints/cp.ckpt")
+      model_hiatory = model.fit(train_data, 
+                                epochs=3,
+                                validation_data=test_data,
+                                callbacks=[model_checkpoint])
   Args:
       checkpoint_path (str): _description_
       monitor (str, optional): _description_. Defaults to "val_accuracy".
@@ -118,7 +122,14 @@ from sklearn.metrics import accuracy_score, mean_absolute_percentage_error, prec
 
 def mean_absolute_scaled_error(y_true, y_pred):
   """
-  Implement MASE (assuming no seasonality of data).
+  For calculate Mean Absolute Scaled Error
+
+  Args:
+      y_true (array): Data from the test dataset
+      y_pred (array): Data from the prediction
+
+  Returns:
+      float64: Mean Absolute Scaled Error (MASE) value
   """
   mae = tf.reduce_mean(tf.abs(y_true - y_pred))
 
@@ -149,7 +160,18 @@ def evaluate_classification(y_true, y_pred):
   return model_results
 
 def evaluate_regression(y_true, y_pred, mape=False, mase=False):
+  """
+  Calculate regression model metrics only such as mae, mse, or rmse.
 
+  Args:
+      y_true (_type_): _description_
+      y_pred (_type_): _description_
+      mape (bool, optional): _description_. Defaults to False.
+      mase (bool, optional): _description_. Defaults to False.
+
+  Returns:
+      _type_: _description_
+  """
   y_true = tf.cast(y_true, dtype=tf.float32)
   y_pred = tf.cast(y_pred, dtype=tf.float32)
   
@@ -160,7 +182,7 @@ def evaluate_regression(y_true, y_pred, mape=False, mase=False):
   mape = (tf.keras.metrics.mean_absolute_percentage_error(y_true, y_pred) \
     if mape == True else tf.constant("No value"))
   mase = (mean_absolute_scaled_error(y_true, y_pred) \
-    if mase  == True else np.array(["No value"]))
+    if mase  == True else tf.constant("No value"))
   
   return {"mae": mae.numpy(),
           "mse": mse.numpy(),
